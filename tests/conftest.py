@@ -16,6 +16,23 @@ directly and continue to work unchanged — this fixture is purely additive.
 from pathlib import Path
 
 import pytest
+from hypothesis import HealthCheck, settings
+
+# ---------------------------------------------------------------------------
+# Hypothesis profile — desabilita o deadline no perfil padrão.
+#
+# O teste test_git_ignores_sensitive_filenames chama subprocess.run(["git",
+# "check-ignore", ...]) para cada exemplo gerado. No Windows, inicializar
+# git.exe custa ~300–400 ms na primeira chamada de cada rodada, ultrapassando
+# o deadline padrão de 200 ms da Hypothesis (FlakyFailure).
+# Em Linux/WSL o mesmo teste passa sem problemas.
+# ---------------------------------------------------------------------------
+settings.register_profile(
+    "default",
+    deadline=None,
+    suppress_health_check=[HealthCheck.too_slow],
+)
+settings.load_profile("default")
 
 
 @pytest.fixture

@@ -1,0 +1,41 @@
+# =============================================================================
+# terraform.tfvars.example — Exemplo de valores para o terraform.tfvars
+# =============================================================================
+# TODO: Copie este arquivo para terraform.tfvars e substitua pelos seus valores:
+#   cp terraform.tfvars.example terraform.tfvars
+#
+# O arquivo terraform.tfvars está no .gitignore e NUNCA deve ser commitado.
+# Ele contém a senha do banco e sua chave pública SSH.
+# =============================================================================
+
+aws_region   = "us-east-1"
+project_name = "moodle-challenge"
+
+# --- Rede ---
+vpc_cidr              = "10.0.0.0/16"
+public_subnet_cidr    = "10.0.1.0/24"
+private_subnet_cidr_a = "10.0.2.0/24"
+private_subnet_cidr_b = "10.0.3.0/24"
+
+# --- Compute ---
+ec2_instance_type = "t3.medium"
+
+# TODO: Cole aqui o conteúdo do seu arquivo de chave pública SSH
+# Gere com: ssh-keygen -t rsa -b 4096 -f ~/.ssh/moodle_key
+# Exiba com: cat ~/.ssh/moodle_key.pub
+ec2_public_key = "ssh-rsa AAAAB3Nza... seu_email@exemplo.com"
+
+# TODO: Restrinja ao seu IP público com /32 (ex.: 203.0.113.10/32)
+# Consulte seu IP em: https://checkip.amazonaws.com
+# NUNCA use 0.0.0.0/0 em produção — isso expõe o SSH à internet inteira.
+ssh_allowed_cidr = "YOUR_IP/32"
+
+# --- Database ---
+db_name     = "moodle"
+db_username = "moodle"
+
+# TODO: Substitua por uma senha forte (mínimo 8 caracteres, sem '@', '/', '"', ' ')
+db_password = "SenhaForte#2024!"
+
+# TODO: Senha do administrador do Moodle (min. 8 chars, maiúscula, número e símbolo)
+moodle_admin_password = "MoodleAdmin#2024!"

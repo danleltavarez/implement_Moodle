@@ -1,0 +1,13 @@
+# Força LF em todos os arquivos de texto relevantes ao projeto.
+# Sem isso, o Git no Windows pode converter para CRLF ao fazer checkout,
+# quebrando scripts .sh (shebang inválido) e arquivos .env (autenticação
+# do PostgreSQL falha com senha contendo \r no final).
+
+*.sh    text eol=lf
+*.tf    text eol=lf
+*.yml   text eol=lf
+*.yaml  text eol=lf
+.env*   text eol=lf
+*.md    text eol=lf
+Dockerfile text eol=lf
+*.py text eol=lf

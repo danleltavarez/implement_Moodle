@@ -38,6 +38,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     unzip \
     git \
+    # sudo — necessário para o entrypoint rodar o instalador CLI como www-data
+    sudo \
+    # Cliente PostgreSQL — usado pelo entrypoint para aguardar o banco estar pronto
+    postgresql-client \
     && rm -rf /var/lib/apt/lists/*
 
 # -----------------------------------------------------------------------------
@@ -69,6 +73,8 @@ RUN docker-php-ext-install \
     intl \
     # Driver PDO para PostgreSQL (conexão com o banco de dados)
     pdo_pgsql \
+    # Extensão nativa pgsql (exigida pelo driver native/pgsql do Moodle)
+    pgsql \
     # Processamento de imagens (thumbnails, avatares de usuários)
     gd \
     # Cache de opcodes PHP (melhora performance de produção)
@@ -152,3 +158,13 @@ RUN a2enmod rewrite
 
 # Porta exposta pelo contêiner (mapeada para 8080 no host via docker-compose.yml)
 EXPOSE 80
+
+# -----------------------------------------------------------------------------
+# Entrypoint customizado
+# Aguarda o banco, executa o instalador CLI do Moodle na primeira execução
+# e depois inicia o Apache. Substitui o CMD padrão da imagem base.
+# -----------------------------------------------------------------------------
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+CMD ["/usr/local/bin/entrypoint.sh"]

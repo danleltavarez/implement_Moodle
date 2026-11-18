@@ -1,0 +1,46 @@
+# =============================================================================
+# docker-compose.aws.yml — Compose standalone para o ambiente AWS (EC2 + RDS)
+# =============================================================================
+# Este arquivo é INDEPENDENTE do docker-compose.yml local.
+# Na AWS não há container de banco: o Moodle conecta diretamente ao RDS.
+#
+# Uso pelo user_data.sh:
+#   docker compose -f docker-compose.aws.yml up -d --build
+#
+# Variáveis lidas do arquivo .env criado pelo user_data.sh em runtime:
+#   MOODLE_DB_HOST, MOODLE_DB_PORT, MOODLE_DB_NAME,
+#   MOODLE_DB_USER, MOODLE_DB_PASSWORD,
+#   MOODLE_ADMIN_PASSWORD, MOODLE_WWWROOT
+#
+# TODO: Ajuste a tag da imagem base se quiser fixar uma versão específica.
+# =============================================================================
+
+services:
+
+  # ---------------------------------------------------------------------------
+  # Serviço: moodle — Aplicação Moodle 4.1 rodando em php:8.1-apache
+  # TODO: Ajuste os volumes ou variáveis de ambiente se necessário
+  # ---------------------------------------------------------------------------
+  moodle:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    restart: unless-stopped
+
+    ports:
+      - "80:80"
+
+    # Lê todas as variáveis do .env criado pelo user_data.sh
+    env_file:
+      - .env
+
+    volumes:
+      # NOTE: /var/www/html is NOT mounted here — Moodle source files are baked
+      # into the image at build time. Mounting a volume there would shadow the
+      # installed source files and break the installation.
+      # TODO: Ajuste os volumes se precisar de persistência externa
+      - moodle_www:/var/moodledata
+
+volumes:
+  moodle_www:

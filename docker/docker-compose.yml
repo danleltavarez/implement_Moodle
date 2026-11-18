@@ -18,10 +18,10 @@ services:
     image: postgres:15
     restart: unless-stopped
 
-    # Carrega as variáveis de ambiente a partir do .env.example
+    # Carrega as variáveis de ambiente a partir do arquivo .env local
     # TODO: Em produção, use o arquivo .env (sem valores de exemplo)
     env_file:
-      - .env.example
+      - .env
 
     # Healthcheck: aguarda o PostgreSQL aceitar conexões antes de liberar o Moodle
     healthcheck:
@@ -55,25 +55,33 @@ services:
     ports:
       - "8080:80"
 
-    # Carrega as variáveis de ambiente a partir do .env.example
+    # Carrega as variáveis de ambiente a partir do arquivo .env local
+    # TODO: Ajuste as variáveis de ambiente ou adicione configurações extras aqui
     env_file:
-      - .env.example
+      - .env
 
     # Passa as variáveis de conexão ao banco de dados para o contêiner Moodle
+    # As variáveis MOODLE_DB_* são lidas diretamente do .env e repassadas
+    # ao entrypoint.sh, que as usa para aguardar o banco e rodar o instalador.
     environment:
-      - MOODLE_DATABASE_TYPE=pgsql
-      - MOODLE_DATABASE_HOST=${MOODLE_DATABASE_HOST}
-      - MOODLE_DATABASE_PORT_NUMBER=${MOODLE_DATABASE_PORT_NUMBER}
-      - MOODLE_DATABASE_NAME=${MOODLE_DATABASE_NAME}
-      - MOODLE_DATABASE_USER=${MOODLE_DATABASE_USER}
-      - MOODLE_DATABASE_PASSWORD=${MOODLE_DATABASE_PASSWORD}
-      - MOODLE_USERNAME=${MOODLE_USERNAME}
-      - MOODLE_PASSWORD=${MOODLE_PASSWORD}
+      - MOODLE_DB_TYPE=${MOODLE_DB_TYPE}
+      - MOODLE_DB_HOST=${MOODLE_DB_HOST}
+      - MOODLE_DB_PORT=${MOODLE_DB_PORT}
+      - MOODLE_DB_NAME=${MOODLE_DB_NAME}
+      - MOODLE_DB_USER=${MOODLE_DB_USER}
+      - MOODLE_DB_PASSWORD=${MOODLE_DB_PASSWORD}
+      - MOODLE_DB_PREFIX=${MOODLE_DB_PREFIX}
+      - MOODLE_WWWROOT=${MOODLE_WWWROOT}
+      - MOODLE_ADMIN_USER=${MOODLE_ADMIN_USER}
+      - MOODLE_ADMIN_PASSWORD=${MOODLE_ADMIN_PASSWORD}
+      - MOODLE_ADMIN_EMAIL=${MOODLE_ADMIN_EMAIL}
       - MOODLE_SITE_NAME=${MOODLE_SITE_NAME}
 
     volumes:
-      # TODO: Ajuste os caminhos de montagem dos volumes caso necessário
-      - moodle_data:/var/www/html
+      # NOTE: /var/www/html is NOT mounted here — Moodle source files are baked
+      # into the image at build time (COPY step in Dockerfile). Mounting a volume
+      # there would shadow the installed files and break the installation.
+      # TODO: Ajuste o caminho do volume caso necessário
       - moodle_www:/var/moodledata
 
 # =============================================================================
@@ -82,5 +90,4 @@ services:
 # =============================================================================
 volumes:
   db_data:
-  moodle_data:
   moodle_www:

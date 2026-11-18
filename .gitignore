@@ -75,6 +75,10 @@ web_modules/
 *.tfvars
 terraform.tfstate
 terraform.tfstate.backup
+# backend.tf com valores reais nunca deve ser versionado (use backend.tf.example como referência)
+terraform/backend.tf
+.terraform/
+.terraform.lock.hcl
 
 # Credenciais e chaves privadas
 *.pem

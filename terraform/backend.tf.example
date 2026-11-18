@@ -1,0 +1,41 @@
+# =============================================================================
+# backend.tf.example — Exemplo de backend remoto S3 + DynamoDB
+# =============================================================================
+# Para ativar:
+#   1. Crie manualmente o bucket S3 e a tabela DynamoDB no console AWS
+#      (o LabRole tem permissão para criar esses recursos via console)
+#   2. Copie este arquivo para backend.tf:
+#        cp backend.tf.example backend.tf
+#   3. Preencha bucket, key e dynamodb_table com seus valores reais
+#   4. Execute: terraform init -migrate-state
+#
+# ATENÇÃO: backend.tf com valores reais NÃO deve ser commitado.
+#   Adicione ao .gitignore: backend.tf
+#
+# Por que S3 + DynamoDB?
+#   - O terraform.tfstate local contém senhas em texto plano
+#   - O bucket S3 pode ter criptografia server-side (SSE-S3 ou SSE-KMS)
+#   - O DynamoDB fornece lock pessimista que evita conflitos em equipe
+#
+# TODO: Preencha os valores abaixo antes de copiar para backend.tf
+# =============================================================================
+
+terraform {
+  backend "s3" {
+    # TODO: Nome do bucket S3 criado manualmente no console AWS
+    bucket = "meu-bucket-terraform-state-SUBSTITUA"
+
+    # Caminho do arquivo de estado dentro do bucket
+    key = "moodle-challenge/terraform.tfstate"
+
+    # Região do bucket (deve ser a mesma do provider)
+    region = "us-east-1"
+
+    # TODO: Nome da tabela DynamoDB criada manualmente no console AWS
+    # Atributo de chave primária deve ser "LockID" (String)
+    dynamodb_table = "terraform-lock-SUBSTITUA"
+
+    # Habilita criptografia server-side no S3 (SSE-S3, sem custo adicional)
+    encrypt = true
+  }
+}
