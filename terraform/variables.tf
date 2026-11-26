@@ -73,7 +73,7 @@ variable "ssh_allowed_cidr" {
     TODO: Defina seu IP/32 no terraform.tfvars antes de executar terraform apply.
     Consulte seu IP em: https://checkip.amazonaws.com
   EOT
-  type = string
+  type        = string
   # No default — must be set explicitly to prevent accidental 0.0.0.0/0 exposure.
 
   validation {

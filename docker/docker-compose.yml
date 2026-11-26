@@ -78,10 +78,11 @@ services:
       - MOODLE_SITE_NAME=${MOODLE_SITE_NAME}
 
     volumes:
-      # NOTE: /var/www/html is NOT mounted here — Moodle source files are baked
-      # into the image at build time (COPY step in Dockerfile). Mounting a volume
-      # there would shadow the installed files and break the installation.
+      # NOTE: /var/www/html is mounted here to reuse the existing Moodle
+      # installation (docker_moodle_data). The entrypoint detects config.php
+      # and skips the CLI installer, preserving the database and all data.
       # TODO: Ajuste o caminho do volume caso necessário
+      - moodle_data:/var/www/html
       - moodle_www:/var/moodledata
 
 # =============================================================================
@@ -90,4 +91,5 @@ services:
 # =============================================================================
 volumes:
   db_data:
+  moodle_data:
   moodle_www:

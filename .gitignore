@@ -80,6 +80,9 @@ terraform/backend.tf
 .terraform/
 .terraform.lock.hcl
 
+# Pastas de backup local — contêm dumps de banco e config.php com credenciais
+backup_*/
+
 # Credenciais e chaves privadas
 *.pem
 *.key

@@ -119,7 +119,7 @@ umask 077
   # do restante do script. Se o cat falhar, o subshell retorna código != 0
   # e o set -e do script pai aborta a execução.
   exec 1>/dev/null 2>/dev/null
-  cat > "${WORK_DIR}/docker/.env" <<ENVEOF
+  cat > "$${WORK_DIR}/docker/.env" <<ENVEOF
 # Gerado automaticamente em runtime pelo user_data.sh — nao editar manualmente
 # Banco de dados (RDS PostgreSQL)
 POSTGRES_DB=${db_name}
@@ -143,12 +143,12 @@ ENVEOF
 )
 
 # Restringe permissão explicitamente (defence in depth, além do umask 077)
-chmod 600 "${WORK_DIR}/docker/.env"
+chmod 600 "$${WORK_DIR}/docker/.env"
 
 # Substitui o placeholder do DNS público agora que temos o valor real.
 # sed não escreve senhas — apenas o hostname público, que já está no log.
 sed -i "s|http://EC2_DNS_PLACEHOLDER|http://$${EC2_PUBLIC_DNS}|g" \
-  "${WORK_DIR}/docker/.env"
+  "$${WORK_DIR}/docker/.env"
 
 echo "=== [$(date)] .env criado com permissao 600 ==="
 
@@ -158,7 +158,7 @@ echo "=== [$(date)] .env criado com permissao 600 ==="
 # sem container de banco. Mapeado na porta 80 (HTTP público).
 # -----------------------------------------------------------------------------
 echo "=== [$(date)] Subindo Moodle com Docker Compose (AWS) ==="
-cd "${WORK_DIR}/docker"
+cd "$${WORK_DIR}/docker"
 docker compose -f docker-compose.aws.yml up -d --build
 
 echo "=== [$(date)] user_data: concluido ==="
